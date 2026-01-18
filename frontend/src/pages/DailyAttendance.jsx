@@ -86,15 +86,62 @@ const DailyAttendance = () => {
         XLSX.writeFile(workbook, `Attendance_Report_${startDate}_to_${endDate}.xlsx`);
     };
 
-    // Filter Logic
-    const filteredRecords = attendanceData.filter(item => {
+    // Filter Logic & Master List Generation
+    let displayRecords = [];
+
+    // Check if we are in "Daily View" (Start Date == End Date) AND we have employee data
+    const isDailyView = startDate === endDate && employees.length > 0;
+
+    if (isDailyView) {
+        // Master List Mode: Show ALL employees, fill data if present, else Absent
+        displayRecords = employees.map(emp => {
+            // Find existing attendance record for this employee
+            const record = attendanceData.find(r => r.user.id === emp.id);
+            if (record) return record;
+
+            // Create "Ghost" Absent Record
+            return {
+                id: `absent-${emp.id}`,
+                date: startDate, // Use the selected date
+                status: 'Absent',
+                workMode: '-',
+                loginTime: null,
+                logoutTime: null,
+                totalHours: 0,
+                isLate: false,
+                user: {
+                    id: emp.id,
+                    name: emp.name,
+                    employeeId: emp.employeeId,
+                    role: emp.role,
+                    department: emp.department,
+                    designation: emp.designation,
+                    profileImage: emp.profileImage
+                }
+            };
+        });
+    } else {
+        // Range Mode: Show only actual attendance logs
+        displayRecords = attendanceData;
+    }
+
+    // Apply Filters to the generated list
+    const filteredRecords = displayRecords.filter(item => {
         const matchesStatus = filterStatus === 'All' || item.status === filterStatus;
-        const matchesRole = filterRole === 'All' || item.user.role === filterRole; // Check Role
-        const matchesEmployee = filterEmployeeId === 'All' || item.user.id === filterEmployeeId; // Check Individual User
+        const matchesRole = filterRole === 'All' || item.user.role === filterRole;
+        const matchesEmployee = filterEmployeeId === 'All' || item.user.id === filterEmployeeId;
         const matchesSearch = item.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.user.employeeId.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesStatus && matchesRole && matchesEmployee && matchesSearch;
     });
+
+    // Helper for Duration
+    const formatDuration = (hoursDecimal) => {
+        if (!hoursDecimal) return '0h 0m';
+        const h = Math.floor(hoursDecimal);
+        const m = Math.round((hoursDecimal - h) * 60);
+        return `${h}h ${m}m`;
+    };
 
     // Filtered Summary for Cards
     const filteredSummary = summaryData.filter(s => {
@@ -102,13 +149,6 @@ const DailyAttendance = () => {
         const matchesEmployee = filterEmployeeId === 'All' || s.user.id === filterEmployeeId;
         return matchesRole && matchesEmployee;
     });
-
-    const formatDuration = (hoursDecimal) => {
-        if (!hoursDecimal) return '0h 0m';
-        const h = Math.floor(hoursDecimal);
-        const m = Math.round((hoursDecimal - h) * 60);
-        return `${h}h ${m}m`;
-    };
 
     return (
         <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
