@@ -191,6 +191,15 @@ const Login = () => {
                         </button>
                     </form>
 
+                    <div className="mt-6 text-center">
+                        <button
+                            onClick={() => navigate('/register')}
+                            className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                        >
+                            New Organization? <span className="font-bold underline decoration-2 underline-offset-2">Create Admin Account</span>
+                        </button>
+                    </div>
+
                     <div className="mt-8 text-center text-sm text-slate-400">
                         <p>Protected by Tyro Security Systems</p>
                     </div>
