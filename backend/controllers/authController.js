@@ -88,12 +88,15 @@ exports.register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
+        // Auto-generate employeeId if not provided (Format: TYRO-RANDOM)
+        const finalEmployeeId = employeeId || `TYRO-${Math.floor(1000 + Math.random() * 9000)}`;
+
         const newUser = await prisma.user.create({
             data: {
                 name,
                 email,
                 password: hashedPassword,
-                employeeId,
+                employeeId: finalEmployeeId,
                 role: role || 'Employee',
                 department,
                 designation,
