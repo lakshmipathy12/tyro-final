@@ -13,13 +13,31 @@ const DailyAttendance = () => {
     // Data States
     const [attendanceData, setAttendanceData] = useState([]);
     const [summaryData, setSummaryData] = useState([]);
+    const [employees, setEmployees] = useState([]); // List of all employees for dropdown
     const [loading, setLoading] = useState(true);
+
+    // Filters
     const [filterStatus, setFilterStatus] = useState('All');
+    const [filterRole, setFilterRole] = useState('All'); // New
+    const [filterEmployeeId, setFilterEmployeeId] = useState('All'); // New
     const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
 
     useEffect(() => {
         fetchReport();
     }, [startDate, endDate]);
+
+    const fetchEmployees = async () => {
+        try {
+            const res = await api.get('/admin/employees');
+            setEmployees(res.data.data);
+        } catch (error) {
+            console.error("Error fetching employees", error);
+        }
+    };
 
     const fetchReport = async () => {
         setLoading(true);
@@ -71,9 +89,18 @@ const DailyAttendance = () => {
     // Filter Logic
     const filteredRecords = attendanceData.filter(item => {
         const matchesStatus = filterStatus === 'All' || item.status === filterStatus;
+        const matchesRole = filterRole === 'All' || item.user.role === filterRole; // Check Role
+        const matchesEmployee = filterEmployeeId === 'All' || item.user.id === filterEmployeeId; // Check Individual User
         const matchesSearch = item.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.user.employeeId.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesStatus && matchesSearch;
+        return matchesStatus && matchesRole && matchesEmployee && matchesSearch;
+    });
+
+    // Filtered Summary for Cards
+    const filteredSummary = summaryData.filter(s => {
+        const matchesRole = filterRole === 'All' || s.user.role === filterRole;
+        const matchesEmployee = filterEmployeeId === 'All' || s.user.id === filterEmployeeId;
+        return matchesRole && matchesEmployee;
     });
 
     const formatDuration = (hoursDecimal) => {
@@ -95,6 +122,35 @@ const DailyAttendance = () => {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                        {/* Role Filter */}
+                        <div className="px-1">
+                            <select
+                                className="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-3 py-2 focus:outline-none"
+                                value={filterRole}
+                                onChange={(e) => setFilterRole(e.target.value)}
+                            >
+                                <option value="All">All Roles</option>
+                                <option value="Admin">Admin</option>
+                                <option value="HR_Admin">HR Admin</option>
+                                <option value="Manager_Admin">Manager</option>
+                                <option value="Employee">Employee</option>
+                            </select>
+                        </div>
+
+                        {/* Individual Employee Filter */}
+                        <div className="px-1">
+                            <select
+                                className="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-3 py-2 focus:outline-none max-w-[150px]"
+                                value={filterEmployeeId}
+                                onChange={(e) => setFilterEmployeeId(e.target.value)}
+                            >
+                                <option value="All">All Employees</option>
+                                {employees.map(emp => (
+                                    <option key={emp.id} value={emp.id}>{emp.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="flex items-center space-x-2 px-3 py-2 bg-slate-50 rounded-xl border border-slate-200">
                             <CalendarIcon className="w-4 h-4 text-slate-400" />
                             <input
@@ -196,8 +252,8 @@ const DailyAttendance = () => {
                                     key={status}
                                     onClick={() => setFilterStatus(status)}
                                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${filterStatus === status
-                                            ? 'bg-slate-800 text-white shadow-lg shadow-slate-200'
-                                            : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                                        ? 'bg-slate-800 text-white shadow-lg shadow-slate-200'
+                                        : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
                                         }`}
                                 >
                                     {status}
@@ -297,8 +353,8 @@ const DailyAttendance = () => {
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center space-x-2">
                                                     <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${record.status === 'Present' ? 'bg-green-100 text-green-700' :
-                                                            record.status === 'Absent' ? 'bg-red-100 text-red-700' :
-                                                                'bg-amber-100 text-amber-700'
+                                                        record.status === 'Absent' ? 'bg-red-100 text-red-700' :
+                                                            'bg-amber-100 text-amber-700'
                                                         }`}>
                                                         {record.status}
                                                     </span>
@@ -326,39 +382,46 @@ const DailyAttendance = () => {
                 <div className="mt-12">
                     <h2 className="text-xl font-bold text-slate-800 mb-6 px-2">Individual Performance Summary</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {summaryData.map((stat, idx) => (
-                            <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-500 font-bold">
-                                            {stat.user.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-bold text-slate-800">{stat.user.name}</h3>
-                                            <p className="text-xs text-slate-400 font-bold">{stat.user.employeeId}</p>
-                                        </div>
-                                    </div>
-                                    <div className="bg-slate-50 px-3 py-1 rounded-lg">
-                                        <span className="text-xs font-bold text-slate-500">{Math.floor(stat.totalHours)}h Total</span>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-3 gap-2 text-center">
-                                    <div className="bg-green-50 p-3 rounded-xl">
-                                        <p className="text-xl font-black text-green-500">{stat.present}</p>
-                                        <p className="text-[9px] font-bold text-green-400 uppercase">Present</p>
-                                    </div>
-                                    <div className="bg-orange-50 p-3 rounded-xl">
-                                        <p className="text-xl font-black text-orange-500">{stat.late}</p>
-                                        <p className="text-[9px] font-bold text-orange-400 uppercase">Late</p>
-                                    </div>
-                                    <div className="bg-blue-50 p-3 rounded-xl">
-                                        <p className="text-xl font-black text-blue-500">{stat.permissions}</p>
-                                        <p className="text-[9px] font-bold text-blue-400 uppercase">Permit</p>
-                                    </div>
-                                </div>
+                        {filteredSummary.length === 0 ? (
+                            <div className="col-span-full text-center py-10 text-slate-400">
+                                No individual data matching filters.
                             </div>
-                        ))}
+                        ) : (
+                            filteredSummary.map((stat, idx) => (
+                                <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-500 font-bold">
+                                                {stat.user.name.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-slate-800">{stat.user.name}</h3>
+                                                <p className="text-xs text-slate-400 font-bold">{stat.user.employeeId}</p>
+                                                <p className="text-[10px] text-indigo-500 font-bold uppercase tracking-wider mt-1">{stat.user.role?.replace('_', ' ')}</p>
+                                            </div>
+                                        </div>
+                                        <div className="bg-slate-50 px-3 py-1 rounded-lg">
+                                            <span className="text-xs font-bold text-slate-500">{Math.floor(stat.totalHours)}h Total</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-2 text-center">
+                                        <div className="bg-green-50 p-3 rounded-xl">
+                                            <p className="text-xl font-black text-green-500">{stat.present}</p>
+                                            <p className="text-[9px] font-bold text-green-400 uppercase">Present</p>
+                                        </div>
+                                        <div className="bg-orange-50 p-3 rounded-xl">
+                                            <p className="text-xl font-black text-orange-500">{stat.late}</p>
+                                            <p className="text-[9px] font-bold text-orange-400 uppercase">Late</p>
+                                        </div>
+                                        <div className="bg-blue-50 p-3 rounded-xl">
+                                            <p className="text-xl font-black text-blue-500">{stat.permissions}</p>
+                                            <p className="text-[9px] font-bold text-blue-400 uppercase">Permit</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
 
