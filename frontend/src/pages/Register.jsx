@@ -66,7 +66,7 @@ const Register = () => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="card-premium w-full max-w-md p-8 relative z-10 border-t-4 border-indigo-500"
+                    className="card-premium w-full max-w-md p-6 md:p-8 relative z-10 border-t-4 border-indigo-500"
                 >
                     <div className="text-center mb-8">
                         <div className="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
@@ -135,7 +135,7 @@ const Register = () => {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card-premium w-full max-w-lg p-8 relative z-10"
+                className="card-premium w-full max-w-lg p-6 md:p-8 relative z-10"
             >
                 <div className="mb-8 flex items-center justify-between">
                     <div>

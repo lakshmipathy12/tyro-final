@@ -93,20 +93,20 @@ const EmployeeManagement = () => {
     });
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8">
+        <div className="min-h-screen bg-slate-50 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-slate-800">Employee Management</h1>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 space-y-4 md:space-y-0">
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Employee Management</h1>
                     <button
                         onClick={() => handleOpenModal()}
-                        className="btn-premium flex items-center space-x-2"
+                        className="btn-premium flex items-center space-x-2 w-full md:w-auto justify-center"
                     >
                         <UserPlus className="w-5 h-5" />
                         <span>Add Employee</span>
                     </button>
                 </div>
 
-                <div className="card-premium p-6">
+                <div className="card-premium p-4 md:p-6">
                     <div className="flex flex-col md:flex-row gap-4 mb-6">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />

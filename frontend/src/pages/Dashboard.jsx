@@ -240,41 +240,41 @@ const Dashboard = () => {
                 </div>
             </nav>
 
-            <div className="max-w-[1400px] mx-auto px-10 py-10">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-10 py-6 md:py-10">
                 {/* Dashboard Header */}
-                <div className="flex justify-between items-start mb-12">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 md:mb-12 space-y-4 md:space-y-0">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800 mb-1">Dashboard</h1>
+                        <h1 className="text-xl md:text-2xl font-bold text-slate-800 mb-1">Dashboard</h1>
                         <p className="text-slate-500 text-sm">Welcome back, here's your activity for today.</p>
                     </div>
 
                     {/* Floating Clock Display */}
-                    <div className="bg-white border border-slate-100 rounded-2xl px-8 py-3 shadow-sm flex items-center space-x-3">
+                    <div className="bg-white border border-slate-100 rounded-2xl px-6 py-3 shadow-sm flex items-center space-x-3 w-full md:w-auto justify-center">
                         <Clock className="w-6 h-6 text-[#3b82f6]" />
                         <span className="text-2xl font-medium tracking-tight text-slate-700">
-                            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                            {currentTime.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
                         </span>
                     </div>
                 </div>
 
                 {/* 3-Column Grid Layout from Image 0 */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
 
                     {/* Card 1: Today's Attendance */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50/50"
+                        className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-50/50"
                     >
-                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Today's Attendance</h3>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 md:mb-8">Today's Attendance</h3>
 
-                        <div className="space-y-10">
+                        <div className="space-y-8 md:space-y-10">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Clock In</p>
                                     <p className="text-xl font-bold text-slate-800">
                                         {(attendance?.loginTime && !isNaN(new Date(attendance.loginTime).getTime()))
-                                            ? new Date(attendance.loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                            ? new Date(attendance.loginTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true })
                                             : (attendance ? '-' : 'Not Marked')}
                                     </p>
                                 </div>
@@ -288,7 +288,7 @@ const Dashboard = () => {
                                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Clock Out</p>
                                     <p className="text-xl font-bold text-slate-800">
                                         {(attendance?.logoutTime && !isNaN(new Date(attendance.logoutTime).getTime()))
-                                            ? new Date(attendance.logoutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                            ? new Date(attendance.logoutTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true })
                                             : '-'}
                                     </p>
                                 </div>
@@ -298,7 +298,7 @@ const Dashboard = () => {
                                 </div>
                             </div>
 
-                            <div className="pt-4 flex items-center justify-between">
+                            <div className="pt-4 flex flex-wrap gap-2 items-center justify-between">
                                 <div className="flex space-x-2">
                                     {attendance && (
                                         <>
@@ -313,13 +313,13 @@ const Dashboard = () => {
                                     )}
                                 </div>
                                 {!attendance && !loading && (
-                                    <div className="flex space-x-2">
-                                        <button onClick={() => handleClockIn('Office')} className="bg-[#3b82f6] text-white text-[10px] font-bold px-4 py-2 rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all">Clock In (Office)</button>
-                                        <button onClick={() => handleClockIn('Remote')} className="bg-slate-800 text-white text-[10px] font-bold px-4 py-2 rounded-xl shadow-lg shadow-slate-500/20 hover:bg-slate-700 transition-all">Remote</button>
+                                    <div className="flex space-x-2 w-full sm:w-auto">
+                                        <button onClick={() => handleClockIn('Office')} className="flex-1 sm:flex-none bg-[#3b82f6] text-white text-[10px] font-bold px-4 py-2 rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all">Clock In (Office)</button>
+                                        <button onClick={() => handleClockIn('Remote')} className="flex-1 sm:flex-none bg-slate-800 text-white text-[10px] font-bold px-4 py-2 rounded-xl shadow-lg shadow-slate-500/20 hover:bg-slate-700 transition-all">Remote</button>
                                     </div>
                                 )}
                                 {attendance && !attendance.logoutTime && (
-                                    <button onClick={handleClockOut} className="bg-red-500 text-white text-[10px] font-bold px-6 py-2 rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Clock Out</button>
+                                    <button onClick={handleClockOut} className="w-full sm:w-auto bg-red-500 text-white text-[10px] font-bold px-6 py-2 rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Clock Out</button>
                                 )}
                             </div>
                         </div>
@@ -330,9 +330,9 @@ const Dashboard = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50/50 flex flex-col"
+                        className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-50/50 flex flex-col"
                     >
-                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">Quick Stats</h3>
+                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 md:mb-8">Quick Stats</h3>
 
                         <div className="space-y-6 flex-1">
                             <div className="flex items-center space-x-4">
@@ -369,7 +369,7 @@ const Dashboard = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50/50 flex flex-col"
+                        className="bg-white rounded-[2rem] p-5 md:p-8 shadow-sm border border-slate-50/50 flex flex-col"
                     >
                         <div className="flex justify-between items-center mb-8">
                             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Announcements</h3>

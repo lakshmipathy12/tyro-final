@@ -179,15 +179,15 @@ const AdminDashboard = () => {
                 </div>
             )}
 
-            <div className="max-w-[1400px] mx-auto px-10 py-10 pt-16">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-10 py-6 md:py-10 pt-20 md:pt-20">
 
                 {/* Top Stat Cards from Image 1 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
                     <div
                         onClick={() => navigate('/employees')}
-                        className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
+                        className="bg-white p-5 md:p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
                     >
-                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 shadow-sm">
+                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 shadow-sm shrink-0">
                             <Users className="w-7 h-7" />
                         </div>
                         <div>
@@ -201,9 +201,9 @@ const AdminDashboard = () => {
 
                     <div
                         onClick={() => navigate('/attendance-report')}
-                        className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
+                        className="bg-white p-5 md:p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
                     >
-                        <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-500 shadow-sm">
+                        <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-500 shadow-sm shrink-0">
                             <CheckCircle2 className="w-7 h-7" />
                         </div>
                         <div className="flex-1">
@@ -218,9 +218,9 @@ const AdminDashboard = () => {
 
                     <div
                         onClick={() => navigate('/permissions')}
-                        className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
+                        className="bg-white p-5 md:p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
                     >
-                        <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 shadow-sm">
+                        <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 shadow-sm shrink-0">
                             <AlertCircle className="w-7 h-7" />
                         </div>
                         <div>
@@ -234,9 +234,9 @@ const AdminDashboard = () => {
 
                     <div
                         onClick={() => navigate('/week-offs')}
-                        className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
+                        className="bg-white p-5 md:p-8 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-6 cursor-pointer hover:bg-slate-50 transition-all hover:scale-[1.02]"
                     >
-                        <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 shadow-sm">
+                        <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 shadow-sm shrink-0">
                             <Calendar className="w-7 h-7" />
                         </div>
                         <div>
@@ -251,25 +251,25 @@ const AdminDashboard = () => {
 
                 {/* Table Section from Image 1 */}
                 <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div className="p-8 flex justify-between items-center bg-white border-b border-slate-50">
+                    <div className="p-5 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center bg-white border-b border-slate-50 space-y-4 md:space-y-0">
                         <h2 className="text-xl font-bold text-slate-800 tracking-tight">Recent Attendance</h2>
-                        <div className="flex items-center space-x-3">
-                            <button className="bg-[#f8fafc] text-[#64748b] px-4 py-2 rounded-lg text-xs font-bold border border-slate-100 hover:bg-slate-100 transition-colors">
+                        <div className="flex items-center space-x-3 w-full md:w-auto">
+                            <button className="bg-[#f8fafc] text-[#64748b] px-4 py-2 rounded-lg text-xs font-bold border border-slate-100 hover:bg-slate-100 transition-colors w-full md:w-auto">
                                 Export Report
                             </button>
                         </div>
                     </div>
 
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
+                        <table className="w-full text-left min-w-[800px]">
                             <thead className="bg-[#f8fafc] text-[#94a3b8] text-[10px] font-bold uppercase tracking-wider">
                                 <tr>
-                                    <th className="px-8 py-4">Employee</th>
-                                    <th className="px-8 py-4">Date</th>
-                                    <th className="px-8 py-4">Login</th>
-                                    <th className="px-8 py-4">Logout</th>
-                                    <th className="px-8 py-4">Total Hrs</th>
-                                    <th className="px-8 py-4">Status</th>
+                                    <th className="px-5 md:px-8 py-4">Employee</th>
+                                    <th className="px-5 md:px-8 py-4">Date</th>
+                                    <th className="px-5 md:px-8 py-4">Login</th>
+                                    <th className="px-5 md:px-8 py-4">Logout</th>
+                                    <th className="px-5 md:px-8 py-4">Total Hrs</th>
+                                    <th className="px-5 md:px-8 py-4">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -280,7 +280,7 @@ const AdminDashboard = () => {
                                 ) : (
                                     stats.recentActivity.map((log) => (
                                         <tr key={log.id} className="hover:bg-slate-50 transition-colors group">
-                                            <td className="px-8 py-4">
+                                            <td className="px-5 md:px-8 py-4">
                                                 <div className="flex items-center space-x-3">
                                                     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-[10px]">
                                                         {log.user.name.charAt(0)}
@@ -291,25 +291,25 @@ const AdminDashboard = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-4 text-xs font-medium text-slate-500">
+                                            <td className="px-5 md:px-8 py-4 text-xs font-medium text-slate-500">
                                                 {(!isNaN(new Date(log.updatedAt).getTime()))
                                                     ? new Date(log.updatedAt).toLocaleDateString()
                                                     : '-'}
                                             </td>
-                                            <td className="px-8 py-4 text-xs font-bold text-slate-700">
+                                            <td className="px-5 md:px-8 py-4 text-xs font-bold text-slate-700">
                                                 {(log.loginTime && !isNaN(new Date(log.loginTime).getTime()))
-                                                    ? new Date(log.loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                    ? new Date(log.loginTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true })
                                                     : '--:--'}
                                             </td>
-                                            <td className="px-8 py-4 text-xs font-bold text-slate-700">
+                                            <td className="px-5 md:px-8 py-4 text-xs font-bold text-slate-700">
                                                 {(log.logoutTime && !isNaN(new Date(log.logoutTime).getTime()))
-                                                    ? new Date(log.logoutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                    ? new Date(log.logoutTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true })
                                                     : '--:--'}
                                             </td>
-                                            <td className="px-8 py-4 text-xs font-bold text-green-600">
+                                            <td className="px-5 md:px-8 py-4 text-xs font-bold text-green-600">
                                                 {log.totalHours ? `${log.totalHours} Hrs` : '--'}
                                             </td>
-                                            <td className="px-8 py-4">
+                                            <td className="px-5 md:px-8 py-4">
                                                 <div className="flex items-center space-x-2">
                                                     <span className="bg-green-50 text-green-500 text-[10px] font-bold px-3 py-1 rounded-md">Present</span>
                                                     {log.isLate && (

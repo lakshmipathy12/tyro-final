@@ -143,10 +143,10 @@ const Login = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="card-premium w-full max-w-md p-10 relative z-20"
+                    className="card-premium w-full max-w-md p-6 md:p-10 relative z-20"
                 >
-                    <div className="mb-8 text-center">
-                        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">Tyro</h1>
+                    <div className="mb-6 md:mb-8 text-center">
+                        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">Tyro</h1>
                         <p className="text-slate-500 font-medium">Workforce Management System</p>
                     </div>
 
