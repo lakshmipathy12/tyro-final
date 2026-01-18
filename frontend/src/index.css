@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-slate-50 text-slate-800 antialiased overflow-x-hidden;
+  }
+}
+
+@layer components {
+  /* Premium Cards */
+  .card-premium {
+    @apply bg-white/70 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-[2.5rem];
+  }
+
+  /* Premium Buttons */
+  .btn-premium {
+    @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-purple-500/40 active:scale-95;
+  }
+
+  /* Premium Inputs */
+  .input-premium {
+    @apply w-full px-5 py-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all duration-300;
+  }
+
+  /* Glass Navigation */
+  .glass-nav {
+    @apply sticky top-0 z-50 bg-white/60 backdrop-blur-2xl border-b border-white/20;
+  }
+  
+  /* Scrollbar Aesthetics */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1; 
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; 
+  }
+}
+
+/* Animations using standard CSS where needed on top of Framer Motion */
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  z-index: -1;
+  animation: float 10s infinite ease-in-out alternate;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(30px, 30px); }
+}

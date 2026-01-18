@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Role {
+  Employee
+  Admin
+  HR_Admin
+  Manager_Admin
+}
+
+enum Sex {
+  Male
+  Female
+  Other
+}
+
+enum AttendanceStatus {
+  Present
+  Absent
+  Half_Day
+  Leave
+}
+
+enum WorkMode {
+  Office
+  Remote
+}
+
+enum PermissionType {
+  Leave
+  Late_Login
+  Early_Logout
+}
+
+enum PermissionStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+enum AnnouncementTarget {
+  All
+  Individual
+}
+
+// Models
+
+model User {
+  id              String   @id @default(uuid())
+  employeeId      String   @unique
+  name            String
+  email           String   @unique
+  password        String
+  role            Role     @default(Employee)
+  department      String?
+  designation     String?
+  profileImage    String?
+  
+  // New Fields
+  dob             DateTime?
+  sex             Sex?
+  address         String?
+  employeeType    String?  // e.g., "Full-time", "Contract"
+  joiningDate     DateTime?
+  shiftTime       String?  // e.g., "09:00 AM - 06:00 PM"
+  
+  totalLeaves     Int      @default(0)
+  permissionsTaken Int     @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  attendances     Attendance[]
+  permissions     Permission[]
+  recievedAnnouncements Announcement[] @relation("Recipient")
+  sentAnnouncements     Announcement[] @relation("Sender")
+  weekOffs        WeekOff[]
+}
+
+model Attendance {
+  id         String           @id @default(uuid())
+  userId     String
+  date       DateTime         @db.Date // Store only date
+  loginTime  DateTime?
+  logoutTime DateTime?
+  status     AttendanceStatus @default(Absent)
+  isLate     Boolean          @default(false)
+  workMode   WorkMode         @default(Office)
+  totalHours Float            @default(0.0)
+  
+  user       User             @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date]) // One attendance record per user per day
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  userId      String
+  type        PermissionType
+  reason      String
+  status      PermissionStatus @default(Pending)
+  fromDate    DateTime
+  toDate      DateTime
+  approvedBy  String? // ID of the admin who approved
+  createdAt   DateTime         @default(now())
+
+  user        User             @relation(fields: [userId], references: [id])
+}
+
+model WeekOff {
+  id        String @id @default(uuid())
+  userId    String
+  dayOfWeek Int    // 0 = Sunday, 1 = Monday, etc.
+  type      String // e.g., "Full", "Alternate"
+
+  user      User   @relation(fields: [userId], references: [id])
+}
+
+model Announcement {
+  id          String             @id @default(uuid())
+  senderId    String
+  title       String?            // Optional title
+  message     String
+  target      AnnouncementTarget @default(All)
+  recipientId String? // If target is Individual
+  createdAt   DateTime           @default(now())
+
+  sender      User               @relation("Sender", fields: [senderId], references: [id])
+  recipient   User?              @relation("Recipient", fields: [recipientId], references: [id])
+}
