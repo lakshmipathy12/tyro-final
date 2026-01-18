@@ -161,41 +161,116 @@ exports.getTodayAttendance = async (req, res) => {
     }
 };
 
-exports.getDailyReport = async (req, res) => {
+exports.getAttendanceReport = async (req, res) => {
     try {
-        const { date } = req.query;
-        // Ensure date is parsed correctly at 00:00:00 local or UTC depending on storing strategy
-        // Here assuming ISO string YYYY-MM-DD
-        const targetDate = date ? new Date(date) : new Date();
-        targetDate.setHours(0, 0, 0, 0);
+        const { startDate, endDate } = req.query;
 
+        // Default to today if no range provided
+        const start = startDate ? new Date(startDate) : new Date();
+        start.setHours(0, 0, 0, 0);
+
+        const end = endDate ? new Date(endDate) : new Date();
+        end.setHours(23, 59, 59, 999);
+
+        // 1. Fetch all attendance records in range
         const attendances = await prisma.attendance.findMany({
             where: {
-                date: targetDate
+                date: {
+                    gte: start,
+                    lte: end
+                }
             },
             include: {
                 user: {
                     select: {
+                        id: true,
                         name: true,
                         employeeId: true,
                         department: true,
-                        designation: true
+                        designation: true, // Needed for comprehensive reports
+                        joiningDate: true
                     }
                 }
             },
             orderBy: {
-                loginTime: 'asc'
+                date: 'desc' // Newest first
             }
         });
 
+        // 2. Fetch all Approved Permissions in range
+        const permissions = await prisma.permission.findMany({
+            where: {
+                status: 'Approved',
+                OR: [
+                    {
+                        startDate: { lte: end },
+                        endDate: { gte: start }
+                    }
+                ]
+            }
+        });
+
+        // 3. Fetch All Users to calculate Absenteeism
+        const allUsers = await prisma.user.findMany({
+            select: { id: true, name: true, employeeId: true, role: true }
+        });
+
+        // 4. Calculate Stats Per User
+        // We'll map each user to their stats
+        const userStats = {};
+
+        // Initialize everyone with 0
+        allUsers.forEach(user => {
+            if (user.role !== 'Admin') { // Optionally exclude super admins if needed, but let's keep all
+                userStats[user.id] = {
+                    user: user,
+                    present: 0,
+                    halfDay: 0,
+                    late: 0,
+                    permissions: 0,
+                    absent: 0, // We will calculate this roughly or leave for advanced logic
+                    totalHours: 0
+                };
+            }
+        });
+
+        // Aggregate Attendance
+        attendances.forEach(record => {
+            if (userStats[record.userId]) {
+                userStats[record.userId].present += 1; // Basic count
+                userStats[record.userId].totalHours += (record.totalHours || 0);
+
+                if (record.isLate) userStats[record.userId].late += 1;
+                if (record.status === 'Half_Day') userStats[record.userId].halfDay += 1;
+            }
+        });
+
+        // Aggregate Permissions
+        // Keep it simple: if you have a permission overlapping the range, we count it
+        // Correct logic requires checking day-by-day, but for summary:
+        permissions.forEach(perm => {
+            if (userStats[perm.userId]) {
+                userStats[perm.userId].permissions += 1;
+            }
+        });
+
+        // Calculate "Absent" (Very rough approximation: Days Passed - Present - Permissions)
+        // This is complex because of weekends/holidays. For now, we'll return the raw counts 
+        // and let the frontend show "Present: X, Permission: Y". "Absent" is dangerous to guess without holiday calendar.
+
+        // Convert map to array
+        const summary = Object.values(userStats);
+
         res.status(200).json({
             status: 'success',
+            range: { start, end },
             results: attendances.length,
+            summary: summary,
             data: attendances
         });
 
     } catch (error) {
-        console.error('Daily Report Error:', error);
+        console.error('Report Error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };

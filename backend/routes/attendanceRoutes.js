@@ -10,7 +10,8 @@ router.get('/today', attendanceController.getTodayAttendance);
 router.post('/clock-in', attendanceController.clockIn);
 router.post('/clock-out', attendanceController.clockOut);
 
-router.get('/daily-report', authMiddleware.restrictTo('Admin', 'HR_Admin'), attendanceController.getDailyReport);
+// Consolidated Report Route (Daily + Range)
+router.get('/report', authMiddleware.restrictTo('Admin', 'HR_Admin', 'Manager_Admin'), attendanceController.getAttendanceReport);
 
 // Admin routes (Placeholder for future)
 // router.get('/daily-report', authMiddleware.restrictTo('Admin', 'HR_Admin'), attendanceController.getDailyReport);
