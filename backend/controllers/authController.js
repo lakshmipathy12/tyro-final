@@ -10,11 +10,14 @@ const generateToken = (id, role) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        let { email, password } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({ message: 'Please provide email and password' });
         }
+
+        // Sanitize
+        email = email.trim().toLowerCase();
 
         // Check if user exists
         const user = await prisma.user.findUnique({
@@ -22,18 +25,23 @@ exports.login = async (req, res) => {
         });
 
         if (!user) {
-            // Security: Don't reveal if user exists or not, but for dev we might be more explicit
+            console.log("Login failed: User not found:", email);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         // Check password
-        // Ideally use bcrypt.compare, but if user hasn't registered via API yet, 
-        // we might need a way to create initial users. 
-        // Assuming passwords in DB are hashed.
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
+            console.log("Login failed: Password mismatch for:", email);
             return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        // Check JWT Secret
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            console.error("CRITICAL: JWT_SECRET is missing in environment variables!");
+            throw new Error("Server Misconfiguration: JWT_SECRET missing");
         }
 
         const token = generateToken(user.id, user.role);
@@ -45,6 +53,7 @@ exports.login = async (req, res) => {
             ),
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Important for cross-site if frontend/backend differ
         };
 
         res.cookie('jwt', token, cookieOptions);
@@ -61,8 +70,9 @@ exports.login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Login error FULL DETAILS:', error);
+        // Send the actual error to the client for debugging (remove in strict production, but needed now)
+        res.status(500).json({ message: 'Login Failed', error: error.message, stack: error.stack });
     }
 };
 
